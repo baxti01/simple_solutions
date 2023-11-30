@@ -1,13 +1,13 @@
 import stripe
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
 from simple_solutions import settings
 from stripe_api.models import Item
 
 
 def get_item(request, pk):
-    item = get_object_or_404(Item, pk=pk)
+    item = Item.objects.filter(pk=pk).first()
 
     return render(
         request=request,
@@ -18,29 +18,32 @@ def get_item(request, pk):
 
 def buy_item(request, pk):
     stripe.api_key = settings.STRIPE_SECRET_KEY
-    host = request.get_host()
+    item = Item.objects.filter(pk=pk).first()
+    if not item:
+        return JsonResponse(
+            data={'detail': f'Item with id: {pk} not found'}
+        )
 
-    item = get_object_or_404(Item, pk=pk)
-    line_items = [
-        {
-            'price_data': {
-                'currency': item.currency,
-                'product_data': {
-                    'name': item.name,
-                },
-                'unit_amount': int(item.price * 100),
-            },
-            'quantity': 1
-        }
-    ]
-
-    session = stripe.checkout.Session.create(
-        line_items=line_items,
-        mode='payment',
-        success_url=f'http://{host}/item/{pk}',
+    payment_intent = stripe.PaymentIntent.create(
+        amount=int(item.price) * 100,
+        currency=item.currency,
+        automatic_payment_methods={
+            'enabled': True,
+        },
     )
 
-    return JsonResponse(data={'session_id': session.stripe_id})
+    return JsonResponse(
+        data={
+            'client_secret': payment_intent['client_secret']
+        }
+    )
+
+
+def get_success(request):
+    return render(
+        request=request,
+        template_name='stripe_api/success.html'
+    )
 
 
 def get_config(request):
