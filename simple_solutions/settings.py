@@ -81,8 +81,12 @@ WSGI_APPLICATION = 'simple_solutions.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_DB'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
+        'HOST': env('POSTGRES_HOST'),
+        'PORT': env('POSTGRES_PORT'),
     }
 }
 
@@ -125,9 +129,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DJANGO_SUPERUSER_USERNAME = env('DJANGO_SUPERUSER_USERNAME')
-DJANGO_SUPERUSER_EMAIL = env('DJANGO_SUPERUSER_EMAIL')
-DJANGO_SUPERUSER_PASSWORD = env('DJANGO_SUPERUSER_PASSWORD')
+DJANGO_SUPERUSER_USERNAME = env('DJANGO_SUPERUSER_USERNAME', default='admin')
+DJANGO_SUPERUSER_EMAIL = env('DJANGO_SUPERUSER_EMAIL', default='admin@gmail.com')
+DJANGO_SUPERUSER_PASSWORD = env('DJANGO_SUPERUSER_PASSWORD', default='admin')
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')

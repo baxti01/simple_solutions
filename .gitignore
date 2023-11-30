@@ -6,5 +6,6 @@ venv
 !**/migrations/__init__.py
 
 *.env
+!example.env
 
 *.sqlite3
