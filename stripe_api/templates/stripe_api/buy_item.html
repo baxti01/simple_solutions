@@ -1,0 +1,35 @@
+{% extends 'stripe_api/base.html' %}
+{% block main_title %}
+    Item: {{ item.name }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-4 text-center">
+                <div class="card m-2">
+                    <div class="card-header">
+                        <h5 class="card-title m-0">
+                            Item: {{ item.name }}
+                        </h5>
+                    </div>
+                    <div class="card-body item p-2">
+                        <div class="card-text">
+                            Description:
+                            <p class="m-0">{{ item.description }}</p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-subtitle">
+                            <p class="m-0">Price: {{ item.price }}
+                                {{ item.currency }}</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="buy-button" type="button">
+                    Buy
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
