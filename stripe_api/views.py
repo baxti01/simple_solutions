@@ -1,13 +1,13 @@
 import stripe
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
 from simple_solutions import settings
 from stripe_api.models import Item
 
 
 def get_item(request, pk):
-    item = get_object_or_404(Item, pk=pk)
+    item = Item.objects.filter(pk=pk).first()
 
     return render(
         request=request,
@@ -20,7 +20,11 @@ def buy_item(request, pk):
     stripe.api_key = settings.STRIPE_SECRET_KEY
     host = request.get_host()
 
-    item = get_object_or_404(Item, pk=pk)
+    item = Item.objects.filter(pk=pk).first()
+    if not item:
+        return JsonResponse(
+            data={'detail': f'Item with id: {pk} not found'}
+        )
     line_items = [
         {
             'price_data': {
